@@ -2,6 +2,10 @@
 
 初学Swift 对URLSession进行封装的网络请求。
 
+支持pod
+
+pod  ‘KLSessionNetwork’
+
 使用方法：
 
 let op = operationNSURLSession.init(delegate: self)
