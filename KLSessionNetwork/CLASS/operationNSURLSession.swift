@@ -133,9 +133,6 @@ class operationNSURLSession: NSObject {
     }
     
     func URLEncodedString(_ value:NSString) -> NSString {
-//        NSString *self_str=(NSString*)self;
-//        NSMutableString *m_str=[NSMutableString string];
-//        NSMutableCharacterSet* URLQueryPartAllowedCharacterSet = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
         let m_str = NSMutableString()
         var URLQueryPartAllowedCharacterSet = CharacterSet.urlQueryAllowed
         URLQueryPartAllowedCharacterSet.remove(charactersIn: "?&=@+/'")
@@ -147,29 +144,19 @@ class operationNSURLSession: NSObject {
             m_str.append(slicedString.addingPercentEncoding(withAllowedCharacters: URLQueryPartAllowedCharacterSet)!)
         }
         return m_str
-//        [URLQueryPartAllowedCharacterSet removeCharactersInString:@"?&=@+/'"];
-//        NSInteger max_count=100;
-//        NSInteger stringLength=self_str.length;
-//        NSInteger i;
-//        for (i=0;i<stringLength;i+=max_count) {
-//            NSInteger rangeLength = i + max_count > stringLength ? stringLength - i : max_count;
-//            NSString *slicedString=[self_str substringWithRange:NSMakeRange(i, rangeLength)];
-//            [m_str appendString:[slicedString stringByAddingPercentEncodingWithAllowedCharacters:URLQueryPartAllowedCharacterSet]];
-//        }
-//        return m_str;
     }
     
     
     func addHttpHeader(request:NSMutableURLRequest!,http_type:HttpClientType)
     {
-        let app_delegate = UIApplication.shared.delegate as! AppDelegate
-        var userCookie = objc_getAssociatedObject(app_delegate,&CookieKey) as? String
+        let app_delegate = UIApplication.shared.delegate
+        var userCookie = objc_getAssociatedObject(app_delegate!,&CookieKey) as? String
         if userCookie == nil
         {
             userCookie = operationNSURLSession.getLocalCookie()//内存中没有值,从本地获取
             if userCookie != nil
             {
-              objc_setAssociatedObject(app_delegate,&CookieKey,userCookie, .OBJC_ASSOCIATION_COPY_NONATOMIC)
+              objc_setAssociatedObject(app_delegate!,&CookieKey,userCookie, .OBJC_ASSOCIATION_COPY_NONATOMIC)
             }
         }
         if (userCookie != nil)
@@ -307,12 +294,12 @@ class operationNSURLSession: NSObject {
                 let dict = httpResponse?.allHeaderFields
                 let new_cookie = dict!["epdToken"] as? String //Set-Cookie epdToken
                 DispatchQueue.main.async {
-                    let app_delegate = UIApplication.shared.delegate as! AppDelegate
-                    let userCookie = objc_getAssociatedObject(app_delegate,&CookieKey) as? String
+                    let app_delegate = UIApplication.shared.delegate
+                    let userCookie = objc_getAssociatedObject(app_delegate!,&CookieKey) as? String
                     if  new_cookie != nil && (userCookie == nil || (userCookie != nil && userCookie != new_cookie) )
                     {
                         self.setLocalCookie(cookie: new_cookie!)
-                        objc_setAssociatedObject(app_delegate,&CookieKey,new_cookie, .OBJC_ASSOCIATION_COPY_NONATOMIC)
+                        objc_setAssociatedObject(app_delegate!,&CookieKey,new_cookie, .OBJC_ASSOCIATION_COPY_NONATOMIC)
                     }
                     self.handleData(data: data as NSData!, code: (httpResponse?.statusCode)!,httpTag: httpTag)
                 }
